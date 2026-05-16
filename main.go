@@ -5,22 +5,13 @@ import (
 	"machine"
 	"time"
 
+	"airguard/config"
+	"airguard/lib"
 	"tinygo.org/x/drivers/dht"
 )
 
-const (
-	dht1Pin  = machine.GPIO4
-	dht2Pin  = machine.GPIO15
-	mq1AO   = machine.GPIO34
-	mq2AO   = machine.GPIO35
-	mq1DO   = machine.GPIO19
-	mq2DO   = machine.GPIO21
-)
-
 func checkMQ(label string, doPin machine.Pin, aoPin machine.Pin) {
-	doPin.Configure(machine.PinConfig{Mode: machine.PinInputPulldown})
-	aoPin.Configure(machine.PinConfig{Mode: machine.PinInput})
-	time.Sleep(10 * time.Millisecond)
+	config.ConfigureMQPin(doPin, aoPin)
 
 	first := aoPin.Get()
 	floating := false
@@ -32,7 +23,7 @@ func checkMQ(label string, doPin machine.Pin, aoPin machine.Pin) {
 		}
 	}
 	if floating {
-		fmt.Printf("[FAIL] %s: disconnected (AO unstable)\n", label)
+		lib.LogFail(label, "disconnected (AO unstable)")
 		return
 	}
 
@@ -41,19 +32,14 @@ func checkMQ(label string, doPin machine.Pin, aoPin machine.Pin) {
 	if do {
 		status = "BAHAYA"
 	}
-	fmt.Printf("[OK]   %s: %s (DO=%v AO=%v)\n", label, status, do, first)
+	lib.LogOK(label, fmt.Sprintf("%s (DO=%v AO=%v)", status, do, first))
 }
 
 func main() {
-	led := machine.LED
-	led.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	config.InitPins()
 
-	machine.GPIO4.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
-	time.Sleep(100 * time.Millisecond)
-	machine.GPIO15.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
-	time.Sleep(100 * time.Millisecond)
-	sensor1 := dht.New(dht1Pin, dht.DHT22)
-	sensor2 := dht.New(dht2Pin, dht.DHT22)
+	sensor1 := dht.New(config.DHT1Pin, dht.DHT22)
+	sensor2 := dht.New(config.DHT2Pin, dht.DHT22)
 
 	fmt.Println("=== AirGuard Sensor Check ===")
 	fmt.Println("Waiting 3s for sensor stabilize...")
@@ -65,28 +51,28 @@ func main() {
 
 		temp1, hum1, err1 := sensor1.Measurements()
 		if err1 != nil {
-			fmt.Printf("[FAIL] DHT22 #1 (GPIO4): %s\n", err1.Error())
+			lib.LogFail("DHT22 #1 (GPIO4)", err1.Error())
 		} else {
-			fmt.Printf("[OK]   DHT22 #1 (GPIO4): temp=%.1f°C hum=%.1f%%\n", float32(temp1)/10, float32(hum1)/10)
+			lib.LogOK("DHT22 #1 (GPIO4)", fmt.Sprintf("temp=%.1f°C hum=%.1f%%", float32(temp1)/10, float32(hum1)/10))
 		}
 
 		time.Sleep(2 * time.Second)
 
 		temp2, hum2, err2 := sensor2.Measurements()
 		if err2 != nil {
-			fmt.Printf("[FAIL] DHT22 #2 (GPIO15): %s\n", err2.Error())
+			lib.LogFail("DHT22 #2 (GPIO15)", err2.Error())
 		} else {
-			fmt.Printf("[OK]   DHT22 #2 (GPIO15): temp=%.1f°C hum=%.1f%%\n", float32(temp2)/10, float32(hum2)/10)
+			lib.LogOK("DHT22 #2 (GPIO15)", fmt.Sprintf("temp=%.1f°C hum=%.1f%%", float32(temp2)/10, float32(hum2)/10))
 		}
 
-		checkMQ("MQ135 #1", mq1DO, mq1AO)
-		checkMQ("MQ135 #2", mq2DO, mq2AO)
+		checkMQ("MQ135 #1", config.MQ1DO, config.MQ1AO)
+		checkMQ("MQ135 #2", config.MQ2DO, config.MQ2AO)
 
 		ledState = !ledState
 		if ledState {
-			led.High()
+			machine.LED.High()
 		} else {
-			led.Low()
+			machine.LED.Low()
 		}
 		time.Sleep(5 * time.Second)
 	}
