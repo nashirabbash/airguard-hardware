@@ -39,6 +39,6 @@ func ReadDHT22() (temp1, hum1, temp2, hum2 float32) {
 	return float32(t1) / 10, float32(h1) / 10, float32(t2) / 10, float32(h2) / 10
 }
 
-func ReadAllDHT22() {
-	ReadDHT22()
+func ReadAllDHT22() (temp1, hum1, temp2, hum2 float32) {
+	return ReadDHT22()
 }

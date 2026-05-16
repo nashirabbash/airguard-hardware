@@ -9,7 +9,7 @@ import (
 	"machine"
 )
 
-func CheckMQ135(label string, doPin machine.Pin, aoPin machine.Pin) {
+func CheckMQ135(label string, doPin machine.Pin, aoPin machine.Pin) uint16 {
 	config.ConfigureMQPin(doPin, aoPin)
 
 	first := aoPin.Get()
@@ -23,7 +23,7 @@ func CheckMQ135(label string, doPin machine.Pin, aoPin machine.Pin) {
 	}
 	if floating {
 		lib.LogFail(label, "disconnected (AO unstable)")
-		return
+		return 0
 	}
 
 	do := doPin.Get()
@@ -32,9 +32,14 @@ func CheckMQ135(label string, doPin machine.Pin, aoPin machine.Pin) {
 		status = "BAHAYA"
 	}
 	lib.LogOK(label, fmt.Sprintf("%s (DO=%v AO=%v)", status, do, first))
+	if do {
+		return 1
+	}
+	return 0
 }
 
-func CheckAllMQ() {
-	CheckMQ135("MQ135 #1", config.MQ1DO, config.MQ1AO)
+func CheckAllMQ() uint16 {
+	mq1 := CheckMQ135("MQ135 #1", config.MQ1DO, config.MQ1AO)
 	CheckMQ135("MQ135 #2", config.MQ2DO, config.MQ2AO)
+	return mq1
 }
