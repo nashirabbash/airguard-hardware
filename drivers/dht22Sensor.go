@@ -1,0 +1,1 @@
+// file for dht 22 functions

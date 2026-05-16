@@ -9,23 +9,49 @@ import (
 )
 
 const (
-	dht1Pin = machine.GPIO4
-	dht2Pin = machine.GPIO5
-	mq1Pin  = machine.GPIO34
-	mq2Pin  = machine.GPIO35
+	dht1Pin  = machine.GPIO4
+	dht2Pin  = machine.GPIO15
+	mq1AO   = machine.GPIO34
+	mq2AO   = machine.GPIO35
+	mq1DO   = machine.GPIO19
+	mq2DO   = machine.GPIO21
 )
 
-func checkMQ(label string, pin machine.Pin) {
-	pin.Configure(machine.PinConfig{Mode: machine.PinInput})
+func checkMQ(label string, doPin machine.Pin, aoPin machine.Pin) {
+	doPin.Configure(machine.PinConfig{Mode: machine.PinInputPulldown})
+	aoPin.Configure(machine.PinConfig{Mode: machine.PinInput})
 	time.Sleep(10 * time.Millisecond)
-	state := pin.Get()
-	fmt.Printf("[OK]   %s: DO state=%v (verify power LED on module)\n", label, state)
+
+	first := aoPin.Get()
+	floating := false
+	for i := 0; i < 10; i++ {
+		time.Sleep(100 * time.Millisecond)
+		if aoPin.Get() != first {
+			floating = true
+			break
+		}
+	}
+	if floating {
+		fmt.Printf("[FAIL] %s: disconnected (AO unstable)\n", label)
+		return
+	}
+
+	do := doPin.Get()
+	status := "AMAN"
+	if do {
+		status = "BAHAYA"
+	}
+	fmt.Printf("[OK]   %s: %s (DO=%v AO=%v)\n", label, status, do, first)
 }
 
 func main() {
 	led := machine.LED
 	led.Configure(machine.PinConfig{Mode: machine.PinOutput})
 
+	machine.GPIO4.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
+	time.Sleep(100 * time.Millisecond)
+	machine.GPIO15.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
+	time.Sleep(100 * time.Millisecond)
 	sensor1 := dht.New(dht1Pin, dht.DHT22)
 	sensor2 := dht.New(dht2Pin, dht.DHT22)
 
@@ -48,13 +74,13 @@ func main() {
 
 		temp2, hum2, err2 := sensor2.Measurements()
 		if err2 != nil {
-			fmt.Printf("[FAIL] DHT22 #2 (GPIO5): %s\n", err2.Error())
+			fmt.Printf("[FAIL] DHT22 #2 (GPIO15): %s\n", err2.Error())
 		} else {
-			fmt.Printf("[OK]   DHT22 #2 (GPIO5): temp=%.1f°C hum=%.1f%%\n", float32(temp2)/10, float32(hum2)/10)
+			fmt.Printf("[OK]   DHT22 #2 (GPIO15): temp=%.1f°C hum=%.1f%%\n", float32(temp2)/10, float32(hum2)/10)
 		}
 
-		checkMQ("MQ135 #1 (GPIO34)", mq1Pin)
-		checkMQ("MQ135 #2 (GPIO35)", mq2Pin)
+		checkMQ("MQ135 #1", mq1DO, mq1AO)
+		checkMQ("MQ135 #2", mq2DO, mq2AO)
 
 		ledState = !ledState
 		if ledState {
