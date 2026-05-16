@@ -33,3 +33,8 @@ func CheckMQ135(label string, doPin machine.Pin, aoPin machine.Pin) {
 	}
 	lib.LogOK(label, fmt.Sprintf("%s (DO=%v AO=%v)", status, do, first))
 }
+
+func CheckAllMQ() {
+	CheckMQ135("MQ135 #1", config.MQ1DO, config.MQ1AO)
+	CheckMQ135("MQ135 #2", config.MQ2DO, config.MQ2AO)
+}

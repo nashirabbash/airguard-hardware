@@ -22,10 +22,8 @@ func main() {
 	for {
 		fmt.Println("--- Scan ---")
 
-		drivers.ReadDHT22()
-
-		drivers.CheckMQ135("MQ135 #1", config.MQ1DO, config.MQ1AO)
-		drivers.CheckMQ135("MQ135 #2", config.MQ2DO, config.MQ2AO)
+		drivers.ReadAllDHT22()
+		drivers.CheckAllMQ()
 
 		ledState = !ledState
 		if ledState {
