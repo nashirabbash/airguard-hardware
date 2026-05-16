@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"airguard/config"
+	"airguard/drivers"
 	"airguard/lib"
-	"tinygo.org/x/drivers/dht"
 )
 
 func checkMQ(label string, doPin machine.Pin, aoPin machine.Pin) {
@@ -37,9 +37,7 @@ func checkMQ(label string, doPin machine.Pin, aoPin machine.Pin) {
 
 func main() {
 	config.InitPins()
-
-	sensor1 := dht.New(config.DHT1Pin, dht.DHT22)
-	sensor2 := dht.New(config.DHT2Pin, dht.DHT22)
+	drivers.InitDHT22()
 
 	fmt.Println("=== AirGuard Sensor Check ===")
 	fmt.Println("Waiting 3s for sensor stabilize...")
@@ -49,21 +47,7 @@ func main() {
 	for {
 		fmt.Println("--- Scan ---")
 
-		temp1, hum1, err1 := sensor1.Measurements()
-		if err1 != nil {
-			lib.LogFail("DHT22 #1 (GPIO4)", err1.Error())
-		} else {
-			lib.LogOK("DHT22 #1 (GPIO4)", fmt.Sprintf("temp=%.1f°C hum=%.1f%%", float32(temp1)/10, float32(hum1)/10))
-		}
-
-		time.Sleep(2 * time.Second)
-
-		temp2, hum2, err2 := sensor2.Measurements()
-		if err2 != nil {
-			lib.LogFail("DHT22 #2 (GPIO15)", err2.Error())
-		} else {
-			lib.LogOK("DHT22 #2 (GPIO15)", fmt.Sprintf("temp=%.1f°C hum=%.1f%%", float32(temp2)/10, float32(hum2)/10))
-		}
+		drivers.ReadDHT22()
 
 		checkMQ("MQ135 #1", config.MQ1DO, config.MQ1AO)
 		checkMQ("MQ135 #2", config.MQ2DO, config.MQ2AO)
