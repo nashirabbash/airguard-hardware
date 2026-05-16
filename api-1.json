@@ -1,0 +1,519 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Elysia Documentation",
+    "description": "Development documentation",
+    "version": "0.0.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "operationId": "getApiHealth"
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "operationId": "postApiAuthLogin"
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "operationId": "postApiAuthLogout"
+      }
+    },
+    "/api/auth/signup": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "operationId": "postApiAuthSignup"
+      }
+    },
+    "/api/auth/users/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "operationId": "getApiAuthUsersById"
+      }
+    },
+    "/api/device/register": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "deviceId": {
+                    "type": "string"
+                  },
+                  "tempUnsafeHigh": {
+                    "type": "number"
+                  },
+                  "tempUnsafeLow": {
+                    "type": "number"
+                  },
+                  "tempWarningHigh": {
+                    "type": "number"
+                  },
+                  "tempWarningLow": {
+                    "type": "number"
+                  },
+                  "humidityUnsafeHigh": {
+                    "type": "number"
+                  },
+                  "humidityUnsafeLow": {
+                    "type": "number"
+                  },
+                  "humidityWarningHigh": {
+                    "type": "number"
+                  },
+                  "humidityWarningLow": {
+                    "type": "number"
+                  },
+                  "mq135BaselineRuntimeOnly": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "deviceId",
+                  "tempUnsafeHigh",
+                  "tempUnsafeLow",
+                  "tempWarningHigh",
+                  "tempWarningLow",
+                  "humidityUnsafeHigh",
+                  "humidityUnsafeLow",
+                  "humidityWarningHigh",
+                  "humidityWarningLow",
+                  "mq135BaselineRuntimeOnly"
+                ]
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "deviceId": {
+                    "type": "string"
+                  },
+                  "tempUnsafeHigh": {
+                    "type": "number"
+                  },
+                  "tempUnsafeLow": {
+                    "type": "number"
+                  },
+                  "tempWarningHigh": {
+                    "type": "number"
+                  },
+                  "tempWarningLow": {
+                    "type": "number"
+                  },
+                  "humidityUnsafeHigh": {
+                    "type": "number"
+                  },
+                  "humidityUnsafeLow": {
+                    "type": "number"
+                  },
+                  "humidityWarningHigh": {
+                    "type": "number"
+                  },
+                  "humidityWarningLow": {
+                    "type": "number"
+                  },
+                  "mq135BaselineRuntimeOnly": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "deviceId",
+                  "tempUnsafeHigh",
+                  "tempUnsafeLow",
+                  "tempWarningHigh",
+                  "tempWarningLow",
+                  "humidityUnsafeHigh",
+                  "humidityUnsafeLow",
+                  "humidityWarningHigh",
+                  "humidityWarningLow",
+                  "mq135BaselineRuntimeOnly"
+                ]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "deviceId": {
+                    "type": "string"
+                  },
+                  "tempUnsafeHigh": {
+                    "type": "number"
+                  },
+                  "tempUnsafeLow": {
+                    "type": "number"
+                  },
+                  "tempWarningHigh": {
+                    "type": "number"
+                  },
+                  "tempWarningLow": {
+                    "type": "number"
+                  },
+                  "humidityUnsafeHigh": {
+                    "type": "number"
+                  },
+                  "humidityUnsafeLow": {
+                    "type": "number"
+                  },
+                  "humidityWarningHigh": {
+                    "type": "number"
+                  },
+                  "humidityWarningLow": {
+                    "type": "number"
+                  },
+                  "mq135BaselineRuntimeOnly": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "deviceId",
+                  "tempUnsafeHigh",
+                  "tempUnsafeLow",
+                  "tempWarningHigh",
+                  "tempWarningLow",
+                  "humidityUnsafeHigh",
+                  "humidityUnsafeLow",
+                  "humidityWarningHigh",
+                  "humidityWarningLow",
+                  "mq135BaselineRuntimeOnly"
+                ]
+              }
+            }
+          }
+        },
+        "operationId": "postApiDeviceRegister"
+      }
+    },
+    "/api/device/{deviceId}": {
+      "put": {
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "tempUnsafeHigh": {
+                    "type": "number"
+                  },
+                  "tempUnsafeLow": {
+                    "type": "number"
+                  },
+                  "tempWarningHigh": {
+                    "type": "number"
+                  },
+                  "tempWarningLow": {
+                    "type": "number"
+                  },
+                  "humidityUnsafeHigh": {
+                    "type": "number"
+                  },
+                  "humidityUnsafeLow": {
+                    "type": "number"
+                  },
+                  "humidityWarningHigh": {
+                    "type": "number"
+                  },
+                  "humidityWarningLow": {
+                    "type": "number"
+                  },
+                  "mq135BaselineRuntimeOnly": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "tempUnsafeHigh",
+                  "tempUnsafeLow",
+                  "tempWarningHigh",
+                  "tempWarningLow",
+                  "humidityUnsafeHigh",
+                  "humidityUnsafeLow",
+                  "humidityWarningHigh",
+                  "humidityWarningLow",
+                  "mq135BaselineRuntimeOnly"
+                ]
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "tempUnsafeHigh": {
+                    "type": "number"
+                  },
+                  "tempUnsafeLow": {
+                    "type": "number"
+                  },
+                  "tempWarningHigh": {
+                    "type": "number"
+                  },
+                  "tempWarningLow": {
+                    "type": "number"
+                  },
+                  "humidityUnsafeHigh": {
+                    "type": "number"
+                  },
+                  "humidityUnsafeLow": {
+                    "type": "number"
+                  },
+                  "humidityWarningHigh": {
+                    "type": "number"
+                  },
+                  "humidityWarningLow": {
+                    "type": "number"
+                  },
+                  "mq135BaselineRuntimeOnly": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "tempUnsafeHigh",
+                  "tempUnsafeLow",
+                  "tempWarningHigh",
+                  "tempWarningLow",
+                  "humidityUnsafeHigh",
+                  "humidityUnsafeLow",
+                  "humidityWarningHigh",
+                  "humidityWarningLow",
+                  "mq135BaselineRuntimeOnly"
+                ]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "tempUnsafeHigh": {
+                    "type": "number"
+                  },
+                  "tempUnsafeLow": {
+                    "type": "number"
+                  },
+                  "tempWarningHigh": {
+                    "type": "number"
+                  },
+                  "tempWarningLow": {
+                    "type": "number"
+                  },
+                  "humidityUnsafeHigh": {
+                    "type": "number"
+                  },
+                  "humidityUnsafeLow": {
+                    "type": "number"
+                  },
+                  "humidityWarningHigh": {
+                    "type": "number"
+                  },
+                  "humidityWarningLow": {
+                    "type": "number"
+                  },
+                  "mq135BaselineRuntimeOnly": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "tempUnsafeHigh",
+                  "tempUnsafeLow",
+                  "tempWarningHigh",
+                  "tempWarningLow",
+                  "humidityUnsafeHigh",
+                  "humidityUnsafeLow",
+                  "humidityWarningHigh",
+                  "humidityWarningLow",
+                  "mq135BaselineRuntimeOnly"
+                ]
+              }
+            }
+          }
+        },
+        "operationId": "putApiDeviceByDeviceId"
+      }
+    },
+    "/api/device/user/{userId}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "operationId": "getApiDeviceUserByUserId"
+      }
+    },
+    "/api/device/delete": {
+      "delete": {
+        "operationId": "deleteApiDeviceDelete"
+      }
+    },
+    "/api/telemetry/current": {
+      "get": {
+        "operationId": "getApiTelemetryCurrent"
+      }
+    },
+    "/api/telemetry/readings": {
+      "get": {
+        "operationId": "getApiTelemetryReadings"
+      }
+    },
+    "/api/telemetry/readings/export": {
+      "get": {
+        "operationId": "getApiTelemetryReadingsExport"
+      }
+    }
+  },
+  "components": {
+    "schemas": {}
+  }
+}

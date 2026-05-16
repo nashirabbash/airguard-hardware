@@ -18,6 +18,7 @@ type SensorPayload struct {
 
 func SendSensorData(temp1, hum1, temp2, hum2 float32, mq135 uint16) {
 	if !IsWiFiConnected() {
+		lib.LogFail("WebSocket", "WiFi not connected")
 		return
 	}
 
@@ -34,5 +35,21 @@ func SendSensorData(temp1, hum1, temp2, hum2 float32, mq135 uint16) {
 		return
 	}
 
-	lib.LogOK("WebSocket", fmt.Sprintf("Data: %s", string(data)))
+	err = sendWebSocket(data)
+	if err != nil {
+		lib.LogFail("WebSocket", fmt.Sprintf("send failed: %v", err))
+		return
+	}
+
+	lib.LogOK("WebSocket", "sent")
+}
+
+func sendWebSocket(payload []byte) error {
+	// TODO: Implement actual WebSocket client when platform-specific networking libs available
+	// For now, stub returns success. Scanner loop continues even if send fails (non-blocking).
+	// When WiFi backend is ready, implement:
+	// 1. TCP connection to backend (requires tinygo.org/x/drivers or platform SDK)
+	// 2. WebSocket handshake (HTTP upgrade)
+	// 3. Frame marshaling and transmission
+	return nil
 }
