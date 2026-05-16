@@ -13,12 +13,10 @@ func RunScanLoop() {
 
 	ledState := false
 	for {
-		fmt.Println("--- Scan ---")
+		fmt.Println("SCANNNING...")
 
-		temp1, hum1, temp2, hum2 := ReadAllDHT22()
-		mq135 := CheckAllMQ()
-
-		SendSensorData(temp1, hum1, temp2, hum2, mq135)
+		ReadAllDHT22()
+		CheckAllMQ()
 
 		ledState = !ledState
 		if ledState {
