@@ -1,6 +1,7 @@
 mod config;
 mod drivers;
 mod log_buffer;
+mod ws;
 
 fn main() {
     // It is necessary to call this function once. Otherwise, some patches to the runtime
