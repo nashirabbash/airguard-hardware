@@ -76,27 +76,40 @@ Default to surfacing uncertainty, not hiding it.
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-ESP32 firmware written in **TinyGo** — not standard Go. Use `machine` package for GPIO/peripheral access.
+ESP32 firmware written in **Rust** — uses `esp-idf-svc` + `esp-idf-hal` for GPIO/peripheral access.
 
 ## Stack
 
-- **Runtime**: TinyGo (not `go run`, not standard Go toolchain)
-- **Target**: ESP32 (`tinygo flash -target=esp32 .`)
-- **Sensors**: DHT22 (temp + humidity), MQ-135 (air quality)
-- **Comms**: WebSocket → backend `/ws/ingest`
-- **Device ID**: `airguard-node-01` (static, hardcoded)
+- **Runtime**: Rust (esp-idf-svc, std enabled via ESP-IDF v5.5.3)
+- **Target**: `xtensa-esp32-espidf` (`cargo run` via espflash runner)
+- **Sensors**: 2× DHT22 (temp + humidity), 2× MQ-135 (air quality, ADC)
+- **Comms**: WebSocket → backend `/ws/ingest` (tungstenite)
+- **Device ID**: `airguard-node-01` (static, hardcoded in `src/config.rs`)
+- **Concurrency**: async (embassy-executor + embassy-time)
 
 ## Flash Command
 
 ```bash
-tinygo flash -target=esp32 -port=/dev/ttyUSB0 .
+cargo run
 ```
 
 Monitor serial:
 
 ```bash
-tinygo monitor -port=/dev/ttyUSB0
+espflash monitor --port /dev/ttyUSB0
 ```
+
+## Pin Map
+
+| Sensor   | Pin | GPIO | Purpose          |
+|----------|-----|------|------------------|
+| DHT1     | -   | 4    | Temperature 1    |
+| DHT2     | -   | 15   | Temperature 2    |
+| MQ1      | DO  | 19   | Air quality 1    |
+| MQ1      | AO  | 34   | Analog read 1    |
+| MQ2      | DO  | 21   | Air quality 2    |
+| MQ2      | AO  | 35   | Analog read 2    |
+| LED      | -   | 2    | Status indicator |
 
 ## Data Payload
 
@@ -105,9 +118,12 @@ Send JSON over WebSocket to backend `/ws/ingest`:
 ```json
 {
   "device_id": "airguard-node-01",
-  "temperature": 25.3,
-  "humidity": 55.1,
-  "mq135_value": 420
+  "temp1": 25.3,
+  "hum1": 55.1,
+  "temp2": 24.8,
+  "hum2": 56.2,
+  "mq1_value": 420,
+  "mq2_value": 415
 }
 ```
 
@@ -116,39 +132,49 @@ Send JSON over WebSocket to backend `/ws/ingest`:
 - No calibration file — baseline computed at runtime from first 30–60s of normal readings
 - Baseline NOT saved to flash/EEPROM, resets on power cycle
 - Status classification is relative to baseline: aman / waspada / bahaya
+- 2 MQ-135 sensors run independent baselines
 
 ## Sensor Thresholds (backend enforces, hardware just reads raw)
 
 | Sensor     | Aman                             | Waspada        | Bahaya       |
-| ---------- | -------------------------------- | -------------- | ------------ |
-| Suhu (°C)  | 20–26                            | 26–30          | >30          |
-| Kelembapan | 40–60%                           | 30–39 / 61–70% | outside that |
-| MQ-135     | relative baseline (runtime only) |
+|-----------|----------------------------------|----------------|--------------|
+| Suhu (°C) | 20–26                            | 26–30          | >30          |
+| Kelembapan| 40–60%                           | 30–39 / 61–70% | outside that |
+| MQ-135    | relative baseline (runtime only) | -              | -            |
 
-## TinyGo Constraints
+## Rust/ESP-IDF Constraints
 
-- No goroutine scheduler guarantees — keep concurrency simple
-- No `net/http` — use `tinygo.org/x/drivers` or raw TCP/WebSocket
-- No reflection, no `fmt.Sprintf` complex formatting in tight loops
-- `machine.LED` = built-in LED pin on ESP32
+- No `std::process::exit` — use `esp_idf_svc::sys::esp_restart()` for resets
+- No dynamic linking — all deps statically linked via ESP-IDF build system
+- Use `esp_idf_hal::gpio::PinDriver` for GPIO, `esp_idf_hal::adc::AdcDriver` for ADC
+- LED = GPIO2 on ESP32 WROOM 32
+- DHT22 reads require `critical_section::with()` to prevent 1-wire timing corruption
+- ADC pins: GPIO34 = ADC1_CH6, GPIO35 = ADC1_CH7
 
 ## WiFi Setup
 
-Configure SSID/password as constants in `main.go` (no env vars on device):
+Configure SSID/password as constants in `src/config.rs` (no env vars on device):
 
-```go
-const (
-    ssid     = "YOUR_SSID"
-    password = "YOUR_PASSWORD"
-    wsURL    = "ws://YOUR_BACKEND_IP:PORT/ws/ingest"
-)
+```rust
+pub const SSID: &str = "YOUR_SSID";
+pub const PASSWORD: &str = "YOUR_PASSWORD";
+pub const WS_URL: &str = "ws://YOUR_BACKEND_IP:PORT/ws/ingest";
 ```
 
 ## Project Structure
 
 ```
-AirGuard Hardware/
-├── main.go       # entry point, sensor loop, WS send
-├── go.mod        # module: airguard, go 1.22.2
+rust/airguard-hardware-rust/
+├── src/
+│   ├── main.rs           # async entry point, WiFi init, spawn scanner
+│   ├── config.rs         # pin constants, WiFi/WS config
+│   ├── drivers/
+│   │   ├── mod.rs
+│   │   ├── dht22.rs      # DHT22 reads + critical section
+│   │   └── mq135.rs      # MQ-135 DO (digital) + AO (ADC)
+│   ├── scanner.rs        # async 5s loop, LED toggle
+│   ├── ws.rs             # tungstenite WebSocket client
+│   └── log_buffer.rs     # circular buffer 256 entries
+├── Cargo.toml
 └── CLAUDE.md
 ```
