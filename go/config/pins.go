@@ -21,8 +21,7 @@ const (
 
 func InitPins() {
 	// Initialize LED
-	led := machine.LED
-	led.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	machine.GPIO2.Configure(machine.PinConfig{Mode: machine.PinOutput})
 
 	// Initialize DHT22 sensor pins
 	DHT1Pin.Configure(machine.PinConfig{Mode: machine.PinInputPullup})

@@ -48,18 +48,19 @@ Rewrite the firmware in Rust using the `esp-idf-hal` + `esp-idf-svc` stack (std 
   - **sensors/dht22** — read two DHT22 sensors, return averaged temp+humidity
   - **sensors/mq135** — read MQ-135 DO/AO pins, return air quality value
   - **websocket** — build payload, connect, send, handle errors
-  - **scan\_loop** — orchestrate sensors + send + LED blink every 5s
+  - **scan_loop** — orchestrate sensors + send + LED blink every 5s
   - **logger** — `log_ok` / `log_fail` helpers (serial output)
 
 ## Testing Decisions
 
-A good test encodes *why* behavior matters, not just what it does. Tests should call the module's public interface and assert on observable outputs — not internal state or implementation details. Avoid mocking hardware in unit tests; prefer integration tests that run on real or emulated hardware when behavior depends on timing or peripheral state.
+A good test encodes _why_ behavior matters, not just what it does. Tests should call the module's public interface and assert on observable outputs — not internal state or implementation details. Avoid mocking hardware in unit tests; prefer integration tests that run on real or emulated hardware when behavior depends on timing or peripheral state.
 
 **Modules to test:**
+
 - **logger**: `log_ok` and `log_fail` produce correct `[OK]` / `[FAIL]` prefixed strings. Pure functions, no hardware dependency — easy unit test.
 - **websocket payload builder**: JSON serialization produces the correct schema with correct field names and averaged sensor values. Pure function, no network dependency.
 - **sensors/dht22 averaging**: Given two raw readings, averaged output is correct. Unit testable if reading is separated from GPIO acquisition.
-- **scan\_loop timing**: Integration test on device — confirm LED blinks and serial output appears every 5 seconds.
+- **scan_loop timing**: Integration test on device — confirm LED blinks and serial output appears every 5 seconds.
 
 Prior art: the TinyGo project had `wifi_test.go` testing config non-emptiness and state transitions. The Rust tests should go further — test the payload builder logic, not just that constants are non-empty.
 

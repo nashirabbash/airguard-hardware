@@ -20,9 +20,9 @@ func RunScanLoop() {
 
 		ledState = !ledState
 		if ledState {
-			machine.LED.High()
+			machine.GPIO2.High()
 		} else {
-			machine.LED.Low()
+			machine.GPIO2.Low()
 		}
 		time.Sleep(5 * time.Second)
 	}
