@@ -32,7 +32,7 @@ critical-section = "1.2"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tungstenite = "0.24"
-embassy-executor = "0.5"
+heapless = "0.8"
 
 [build-dependencies]
 embuild = "0.33"
