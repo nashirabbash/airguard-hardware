@@ -136,10 +136,10 @@ Send JSON over WebSocket to backend `/ws/ingest`:
 
 ## Sensor Thresholds (backend enforces, hardware just reads raw)
 
-| Sensor     | Aman                             | Waspada        | Bahaya       |
-|-----------|----------------------------------|----------------|--------------|
+| Sensor    | Aman                             | Waspada        | Bahaya       |
+| --------- | -------------------------------- | -------------- | ------------ |
 | Suhu (°C) | 20–26                            | 26–30          | >30          |
-| Kelembapan| 40–60%                           | 30–39 / 61–70% | outside that |
+| Kelembapan | 40–60%                          | 30–39 / 61–70% | outside that |
 | MQ-135    | relative baseline (runtime only) | -              | -            |
 
 ## Rust/ESP-IDF Constraints
@@ -163,7 +163,7 @@ pub const WS_URL: &str = "ws://YOUR_BACKEND_IP:PORT/ws/ingest";
 
 ## Project Structure
 
-```
+```txt
 rust/airguard-hardware-rust/
 ├── src/
 │   ├── main.rs           # async entry point, WiFi init, spawn scanner
