@@ -6,7 +6,7 @@ where
     P: InputPin + OutputPin,
 {
     critical_section::with(|_| {
-        Err("DHT22 read not yet implemented".to_string())
+        Err("DHT22 sensor read pending dht-sensor v0.2 API resolution".to_string())
     })
 }
 
