@@ -1,0 +1,2 @@
+dependencies:
+  esp8266/dht: "^3.1.0"
