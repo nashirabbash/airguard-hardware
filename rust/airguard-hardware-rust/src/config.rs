@@ -8,9 +8,9 @@ pub const MQ2_AO_PIN: u32 = 35;
 pub const LED_PIN: u32 = 2;
 
 // WiFi Configuration
-pub const SSID: &str = "YOUR_SSID";
-pub const PASSWORD: &str = "YOUR_PASSWORD";
-pub const WS_URL: &str = "ws://YOUR_BACKEND_IP:PORT/ws/ingest";
+pub const SSID: &str = "vivo V30e";
+pub const PASSWORD: &str = "1sampai8";
+pub const WS_URL: &str = "ws://localhost:3000/ws/ingest";
 
 // Device Configuration
 pub const DEVICE_ID: &str = "airguard-node-01";

@@ -1,1 +1,1 @@
-// Sensor drivers module
+pub mod dht22;
